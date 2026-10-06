@@ -32,7 +32,7 @@ const translations = {
     mapApplicationLabel: "Carte interactive des toilettes publiques",
     mapCredits: "Carte ©",
     legendWashroom: "Toilettes publiques",
-    legendClosed: "Fermé temporairement",
+    legendClosed: "Fermées temporairement",
     footerHeading: "Toilettes répertoriées par la Ville · données du 5 octobre 2026.",
     footerText: "L’accès aux parcs est gratuit; d’autres lieux peuvent avoir leurs propres heures ou frais d’entrée. Vérifiez avant de partir.",
     sourceText: "Données de localisation et d’accessibilité : Ville de Montréal",
