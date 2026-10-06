@@ -1,14 +1,14 @@
 <!doctype html>
-<html lang="en">
+<html lang="fr">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta
       name="description"
-      content="Find city-listed public washrooms across Montréal, including parks, libraries, pools, and community facilities."
+      content="Trouvez les toilettes publiques répertoriées par la Ville de Montréal : parcs, bibliothèques, piscines et autres lieux."
     />
     <meta name="theme-color" content="#f6f5f0" />
-    <title>Washroom Finder — Montréal</title>
+    <title>Toilettes à Montréal — Loocal</title>
     <link rel="preconnect" href="https://unpkg.com" />
     <link rel="preconnect" href="https://a.tile.openstreetmap.org" />
     <link
@@ -29,7 +29,7 @@
   </head>
   <body>
     <header class="topbar">
-      <a class="brand" href="#" aria-label="Washroom Finder home">
+      <a class="brand" href="#" aria-label="Loocal — toilettes à Montréal" data-i18n-aria-label="brandLabel">
         <span class="brand-mark" aria-hidden="true">
           <svg viewBox="0 0 32 32" fill="none">
             <path d="M9 5.5h14v4.2a7 7 0 0 1-14 0V5.5Z" />
@@ -41,31 +41,36 @@
       </a>
       <div class="topbar-note">
         <span class="live-dot" aria-hidden="true"></span>
-        A little relief, around the corner
+        <span data-i18n="topbarNote">Un petit coin de soulagement, tout près</span>
       </div>
-      <a class="about-link" href="#about">About this map <span aria-hidden="true">↗</span></a>
+      <div class="topbar-actions">
+        <button class="language-button" id="language-button" type="button" aria-label="Switch language to English">
+          <span data-i18n="languageButton">English</span>
+        </button>
+        <a class="about-link" href="#about"><span data-i18n="aboutLink">À propos</span><span aria-hidden="true">↗</span></a>
+      </div>
     </header>
 
     <main>
       <section class="intro" aria-labelledby="page-title">
         <div class="intro-copy">
           <p class="eyebrow"><span class="eyebrow-line"></span> MONTRÉAL, QC</p>
-          <h1 id="page-title">Nature calls.<br /><span>We’ve got a map.</span></h1>
+          <h1 id="page-title"><span data-i18n="heroFirst">Besoin d’y aller ?</span><br /><span data-i18n="heroSecond">On a la carte.</span></h1>
           <p class="intro-description">
-            Find a public washroom in parks, libraries, pools, and other city facilities.
+            <span data-i18n="heroDescription">Trouvez des toilettes publiques dans les parcs, bibliothèques, piscines et autres lieux de la Ville.</span>
           </p>
         </div>
         <div class="intro-stamp" aria-hidden="true">
-          <span>GOOD TO</span>
+          <span data-i18n="stampTop">C’EST</span>
           <svg viewBox="0 0 48 48" fill="none">
             <path d="M13 7h22v7a11 11 0 0 1-22 0V7Z" />
             <path d="M17 14h14m-9 12v6a6 6 0 0 0 12 0v-6m-6 12v7m-6 0h12" />
           </svg>
-          <span>GO</span>
+          <span data-i18n="stampBottom">PARTI</span>
         </div>
       </section>
 
-      <section class="finder" aria-label="Find a public washroom">
+      <section class="finder" aria-label="Trouver des toilettes publiques" data-i18n-aria-label="finderLabel">
         <div class="finder-toolbar">
           <label class="search-box" for="search">
             <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
@@ -75,15 +80,16 @@
             <input
               id="search"
               type="search"
-              placeholder="Search a place, neighbourhood, or address"
+              placeholder="Rechercher un lieu, un quartier ou une adresse"
+              data-i18n-placeholder="searchPlaceholder"
               autocomplete="off"
             />
             <kbd>/</kbd>
           </label>
           <label class="district-select">
-            <span class="sr-only">Filter by borough</span>
+            <span class="sr-only" data-i18n="districtLabel">Filtrer par arrondissement</span>
             <select id="district-filter">
-              <option value="">All boroughs</option>
+              <option value="">Tous les arrondissements</option>
             </select>
             <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
               <path d="m5 7.5 5 5 5-5" />
@@ -95,32 +101,34 @@
               <circle cx="10" cy="10" r="1.5" />
               <path d="M10 1.5v3m0 11v3m8.5-8.5h-3m-11 0h-3" />
             </svg>
-            <span>Near me</span>
+            <span data-i18n="nearMe">Près de moi</span>
           </button>
         </div>
 
         <div class="filter-row">
           <div class="active-filter">
             <span class="filter-check" aria-hidden="true">✓</span>
-            City-listed washrooms
+            <span data-i18n="cityListed">Toilettes répertoriées par la Ville</span>
           </div>
-          <span class="filter-note">Parks, libraries, pools & more · check venue access</span>
-          <span class="results-count" id="results-count" aria-live="polite">Finding washrooms…</span>
+          <span class="filter-note" data-i18n="filterNote">Parcs, bibliothèques, piscines et plus · accès à vérifier</span>
+          <span class="results-count" id="results-count" aria-live="polite">Chargement des lieux…</span>
         </div>
 
         <div class="results-layout">
-          <section class="list-panel" aria-label="Washroom locations">
+          <section class="list-panel" aria-label="Emplacements des toilettes" data-i18n-aria-label="listLabel">
             <div class="list-heading">
               <div>
-                <h2>Nearby spots</h2>
-                <p id="list-caption">Public facilities across Montréal</p>
+                <h2 data-i18n="nearbyHeading">À proximité</h2>
+                <p id="list-caption">Lieux publics partout à Montréal</p>
               </div>
               <button
                 class="sort-button"
                 id="sort-button"
                 type="button"
-                aria-label="Sort by place name"
-                title="Sort by place name"
+                aria-label="Trier par nom de lieu"
+                title="Trier par nom de lieu"
+                data-i18n-aria-label="sortLabel"
+                data-i18n-title="sortLabel"
               >
                 A–Z <span aria-hidden="true">↕</span>
               </button>
@@ -128,18 +136,18 @@
             <div class="place-list" id="place-list" aria-live="polite" aria-busy="true">
               <div class="loading-state">
                 <span class="loading-spinner" aria-hidden="true"></span>
-                <span>Finding the nearest little rooms…</span>
+                <span data-i18n="loading">Recherche des toilettes à proximité…</span>
               </div>
             </div>
             <div class="error-state" id="error-state" hidden>
               <span class="error-icon" aria-hidden="true">!</span>
-              <p>We couldn’t load the city’s location data.</p>
-              <button id="retry-button" type="button">Try again</button>
+              <p data-i18n="loadError">Impossible de charger les données de lieux de la Ville.</p>
+              <button id="retry-button" type="button" data-i18n="retry">Réessayer</button>
             </div>
           </section>
 
-          <section class="map-panel" aria-label="Map of public washrooms">
-            <div id="map" role="application" aria-label="Interactive map showing washroom locations"></div>
+          <section class="map-panel" aria-label="Carte des toilettes publiques" data-i18n-aria-label="mapLabel">
+            <div id="map" role="application" aria-label="Carte interactive des toilettes publiques" data-i18n-aria-label="mapApplicationLabel"></div>
             <div class="map-legend">
               <span class="legend-pin" aria-hidden="true">
                 <svg viewBox="0 0 24 24" fill="none">
@@ -147,12 +155,13 @@
                   <path d="M9 6h6v2a3 3 0 0 1-6 0V6Zm2 5v2a1 1 0 0 0 2 0v-2m-1 4v2" />
                 </svg>
               </span>
-              <span>Public washroom</span>
+              <span data-i18n="legendWashroom">Toilettes publiques</span>
               <span class="legend-closed-pin" aria-hidden="true"></span>
-              <span>Temporarily closed</span>
+              <span data-i18n="legendClosed">Fermé temporairement</span>
             </div>
             <div class="map-credit">
-              Map © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">OpenStreetMap</a>
+              <span data-i18n="mapCredits">Carte ©</span>
+              <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">OpenStreetMap</a>
             </div>
           </section>
         </div>
@@ -170,7 +179,7 @@
       <footer class="page-footer" id="about">
         <div class="footer-message">
           <span class="footer-icon" aria-hidden="true">✳</span>
-          <p><strong>City-listed public washrooms · data snapshot October 5, 2026.</strong> Park entry is free; other venues may have their own access hours or admission rules. Check before heading out.</p>
+          <p><strong data-i18n="footerHeading">Toilettes répertoriées par la Ville · données du 5 octobre 2026.</strong> <span data-i18n="footerText">L’accès aux parcs est gratuit; d’autres lieux peuvent avoir leurs propres heures ou frais d’entrée. Vérifiez avant de partir.</span></p>
         </div>
         <a
           class="source-link"
@@ -178,7 +187,7 @@
           target="_blank"
           rel="noreferrer"
         >
-          Location & accessibility data by Ville de Montréal <span aria-hidden="true">↗</span>
+          <span data-i18n="sourceText">Données de localisation et d’accessibilité : Ville de Montréal</span> <span aria-hidden="true">↗</span>
         </a>
       </footer>
     </main>

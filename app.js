@@ -2,6 +2,123 @@
 
 const DEFAULT_CENTER = [45.535, -73.59];
 
+const translations = {
+  fr: {
+    brandLabel: "Loocal — toilettes à Montréal",
+    topbarNote: "Un petit coin de soulagement, tout près",
+    languageButton: "English",
+    languageTarget: "Basculer en anglais",
+    aboutLink: "À propos",
+    heroFirst: "Besoin d’y aller ?",
+    heroSecond: "On a la carte.",
+    heroDescription: "Trouvez des toilettes publiques dans les parcs, bibliothèques, piscines et autres lieux de la Ville.",
+    stampTop: "C’EST",
+    stampBottom: "PARTI",
+    finderLabel: "Trouver des toilettes publiques",
+    searchPlaceholder: "Rechercher un lieu, un quartier ou une adresse",
+    districtLabel: "Filtrer par arrondissement",
+    allDistricts: "Tous les arrondissements",
+    nearMe: "Près de moi",
+    locating: "Localisation…",
+    cityListed: "Toilettes répertoriées par la Ville",
+    filterNote: "Parcs, bibliothèques, piscines et plus · accès à vérifier",
+    nearbyHeading: "À proximité",
+    listLabel: "Emplacements des toilettes",
+    sortLabel: "Trier par nom de lieu",
+    loading: "Recherche des toilettes à proximité…",
+    loadError: "Impossible de charger les données de lieux de la Ville.",
+    retry: "Réessayer",
+    mapLabel: "Carte des toilettes publiques",
+    mapApplicationLabel: "Carte interactive des toilettes publiques",
+    mapCredits: "Carte ©",
+    legendWashroom: "Toilettes publiques",
+    legendClosed: "Fermé temporairement",
+    footerHeading: "Toilettes répertoriées par la Ville · données du 5 octobre 2026.",
+    footerText: "L’accès aux parcs est gratuit; d’autres lieux peuvent avoir leurs propres heures ou frais d’entrée. Vérifiez avant de partir.",
+    sourceText: "Données de localisation et d’accessibilité : Ville de Montréal",
+    searchHeading: "Aucun lieu trouvé",
+    searchHelp: "Essayez un autre nom de lieu ou arrondissement.",
+    locationHoursMissing: "Heures non indiquées — vérifiez avant de partir",
+    seasonalHours: "Horaire saisonnier — consultez les détails du lieu",
+    hoursVary: "Horaire variable — vérifiez avant de partir",
+    today: "Aujourd’hui",
+    closed: "Fermé",
+    closedLocation: "Lieu temporairement fermé",
+    accessible: "Toilettes accessibles",
+    directions: "Itinéraire",
+    placeInfo: "Détails du lieu",
+    spotOne: "lieu",
+    spotMany: "lieux",
+    sortedNearby: "Triés par distance de votre position",
+    acrossTown: "Lieux publics partout à Montréal",
+    finding: "Chargement des lieux…",
+    dataUnavailable: "Données indisponibles",
+    mapUnavailable: "Carte indisponible",
+    locationNotSupported: "Géolocalisation non prise en charge",
+    locationDenied: "Accès à la position refusé",
+    locationUnavailable: "Position indisponible",
+    sortAscending: "A–Z",
+    sortDescending: "Z–A",
+  },
+  en: {
+    brandLabel: "Loocal — Montréal washrooms",
+    topbarNote: "A little relief, around the corner",
+    languageButton: "Français",
+    languageTarget: "Switch language to French",
+    aboutLink: "About",
+    heroFirst: "Nature calls.",
+    heroSecond: "We’ve got a map.",
+    heroDescription: "Find public washrooms in parks, libraries, pools, and other city facilities.",
+    stampTop: "GOOD TO",
+    stampBottom: "GO",
+    finderLabel: "Find public washrooms",
+    searchPlaceholder: "Search a place, neighbourhood, or address",
+    districtLabel: "Filter by borough",
+    allDistricts: "All boroughs",
+    nearMe: "Near me",
+    locating: "Locating…",
+    cityListed: "City-listed washrooms",
+    filterNote: "Parks, libraries, pools & more · check venue access",
+    nearbyHeading: "Nearby spots",
+    listLabel: "Washroom locations",
+    sortLabel: "Sort by place name",
+    loading: "Finding nearby washrooms…",
+    loadError: "We couldn’t load the city’s location data.",
+    retry: "Try again",
+    mapLabel: "Map of public washrooms",
+    mapApplicationLabel: "Interactive map showing washroom locations",
+    mapCredits: "Map ©",
+    legendWashroom: "Public washroom",
+    legendClosed: "Temporarily closed",
+    footerHeading: "City-listed public washrooms · data snapshot October 5, 2026.",
+    footerText: "Park entry is free; other venues may have their own access hours or admission rules. Check before heading out.",
+    sourceText: "Location & accessibility data by Ville de Montréal",
+    searchHeading: "No places found",
+    searchHelp: "Try another place name or borough.",
+    locationHoursMissing: "Hours not listed — check before you go",
+    seasonalHours: "Seasonal hours — check venue details",
+    hoursVary: "Hours vary — check before you go",
+    today: "Today",
+    closed: "Closed",
+    closedLocation: "Location temporarily closed",
+    accessible: "Accessible washroom",
+    directions: "Directions",
+    placeInfo: "Place details",
+    spotOne: "spot",
+    spotMany: "spots",
+    sortedNearby: "Sorted by distance from your location",
+    acrossTown: "Public facilities across Montréal",
+    finding: "Finding washrooms…",
+    dataUnavailable: "Data unavailable",
+    mapUnavailable: "Map unavailable",
+    locationNotSupported: "Location not supported",
+    locationDenied: "Location access denied",
+    locationUnavailable: "Location unavailable",
+    sortAscending: "A–Z",
+    sortDescending: "Z–A",
+  },
+};
+
 const state = {
   allPlaces: [],
   filteredPlaces: [],
@@ -11,6 +128,7 @@ const state = {
   selectedId: null,
   userLocation: null,
   sortAscending: true,
+  language: "fr",
 };
 
 const elements = {
@@ -23,6 +141,7 @@ const elements = {
   retry: document.querySelector("#retry-button"),
   locate: document.querySelector("#locate-button"),
   sort: document.querySelector("#sort-button"),
+  language: document.querySelector("#language-button"),
 };
 
 const icons = {
@@ -39,8 +158,70 @@ function normalizeText(value) {
     .toLocaleLowerCase();
 }
 
+function text(key) {
+  return translations[state.language][key];
+}
+
+function localized(place, field) {
+  return (state.language === "fr" && place.fr?.[field]) || place[field];
+}
+
+function applyTranslations() {
+  const language = translations[state.language];
+  document.documentElement.lang = state.language;
+  document.title = state.language === "fr" ? "Toilettes à Montréal — Loocal" : "Washroom Finder — Montréal";
+  document.querySelector('meta[name="description"]').content =
+    state.language === "fr"
+      ? "Trouvez les toilettes publiques répertoriées par la Ville de Montréal : parcs, bibliothèques, piscines et autres lieux."
+      : "Find city-listed public washrooms across Montréal, including parks, libraries, pools, and community facilities.";
+
+  for (const element of document.querySelectorAll("[data-i18n]")) {
+    const translation = language[element.dataset.i18n];
+    if (translation) element.textContent = translation;
+  }
+  for (const element of document.querySelectorAll("[data-i18n-aria-label]")) {
+    const translation = language[element.dataset.i18nAriaLabel];
+    if (translation) element.setAttribute("aria-label", translation);
+  }
+  for (const element of document.querySelectorAll("[data-i18n-title]")) {
+    const translation = language[element.dataset.i18nTitle];
+    if (translation) element.title = translation;
+  }
+  for (const element of document.querySelectorAll("[data-i18n-placeholder]")) {
+    const translation = language[element.dataset.i18nPlaceholder];
+    if (translation) element.placeholder = translation;
+  }
+
+  elements.language.textContent = text("languageButton");
+  elements.language.setAttribute("aria-label", text("languageTarget"));
+  elements.district.options[0].textContent = text("allDistricts");
+  elements.sort.innerHTML = `${state.sortAscending ? text("sortAscending") : text("sortDescending")} <span aria-hidden="true">↕</span>`;
+  elements.count.textContent = state.allPlaces.length
+    ? `${state.filteredPlaces.length} ${state.filteredPlaces.length === 1 ? text("spotOne") : text("spotMany")}`
+    : text("finding");
+}
+
+function setLanguage(language) {
+  if (!translations[language] || state.language === language) return;
+  state.language = language;
+  applyTranslations();
+
+  try {
+    localStorage.setItem("loocal-language", language);
+  } catch {
+    // File-based pages may not expose local storage.
+  }
+
+  if (state.allPlaces.length) {
+    state.markers.clear();
+    state.allPlaces.forEach(createMarker);
+    fillDistricts();
+    render();
+  }
+}
+
 function formatHours(hours) {
-  if (!hours) return "Hours not listed — check before you go";
+  if (!hours) return text("locationHoursMissing");
   const day = new Intl.DateTimeFormat("en", { weekday: "long" })
     .format(new Date())
     .toLowerCase();
@@ -56,10 +237,10 @@ function formatHours(hours) {
   const matches = [...hours.matchAll(new RegExp(`${frenchDay}\\s+(\\d{2}:\\d{2})-(\\d{2}:\\d{2})`, "gi"))];
   if (matches.length) {
     const times = matches.map((match) => `${match[1]}–${match[2]}`);
-    if (new Set(times).size > 1) return "Seasonal hours — check park info";
-    return `Today ${[...new Set(times)].join(" / ")}`;
+    if (new Set(times).size > 1) return text("seasonalHours");
+    return `${text("today")} ${[...new Set(times)].join(" / ")}`;
   }
-  return "Hours vary — check before you go";
+  return text("hoursVary");
 }
 
 function initMap() {
@@ -93,19 +274,20 @@ function createMarker(place) {
   const popup = document.createElement("div");
   popup.className = "map-popup";
   const name = document.createElement("strong");
-  name.textContent = place.name;
+  name.textContent = localized(place, "name");
   const location = document.createElement("span");
   location.textContent = [
-    place.districts.join(" · "),
-    place.isClosed ? "Location temporarily closed" : formatHours(place.hours),
+    localized(place, "districts").join(" · "),
+    place.isClosed ? text("closedLocation") : formatHours(localized(place, "hours")),
   ].join(" · ");
   popup.append(name, location);
-  if (place.sourceUrl) {
+  const sourceUrl = localized(place, "sourceUrl") || place.sourceUrl;
+  if (sourceUrl) {
     const link = document.createElement("a");
-    link.href = place.sourceUrl;
+    link.href = sourceUrl;
     link.target = "_blank";
     link.rel = "noreferrer";
-    link.textContent = "Park details ↗";
+    link.textContent = `${text("placeInfo")} ↗`;
     popup.append(link);
   }
   marker.bindPopup(popup);
@@ -126,12 +308,14 @@ function createCard(place) {
   card.type = "button";
   card.className = "place-card";
   card.dataset.placeId = place.id;
-  card.setAttribute("aria-label", `${place.name}, ${place.address}`);
+  const name = localized(place, "name");
+  const addressText = localized(place, "address");
+  card.setAttribute("aria-label", `${name}, ${addressText}`);
 
   const top = document.createElement("span");
   top.className = "place-card-top";
-  addText(top, "h3", "", place.name);
-  const placeTag = place.isClosed ? "Closed" : place.facility;
+  addText(top, "h3", "", name);
+  const placeTag = place.isClosed ? text("closed") : localized(place, "facility");
   addText(
     top,
     "span",
@@ -143,13 +327,23 @@ function createCard(place) {
   const address = document.createElement("span");
   address.className = "place-address";
   address.innerHTML = icons.pin;
-  addText(address, "span", "", `${place.address} · ${place.districts.join(" · ")}`);
+  addText(
+    address,
+    "span",
+    "",
+    `${addressText} · ${localized(place, "districts").join(" · ")}`,
+  );
   card.append(address);
 
   const hours = document.createElement("span");
   hours.className = "place-hours";
   hours.innerHTML = icons.clock;
-  addText(hours, "span", "", place.isClosed ? "Location temporarily closed" : formatHours(place.hours));
+  addText(
+    hours,
+    "span",
+    "",
+    place.isClosed ? text("closedLocation") : formatHours(localized(place, "hours")),
+  );
   card.append(hours);
 
   const actions = document.createElement("span");
@@ -157,7 +351,7 @@ function createCard(place) {
   const access = document.createElement("span");
   access.className = "accessibility-label";
   access.innerHTML = icons.accessibility;
-  addText(access, "span", "", "Accessible washroom");
+  addText(access, "span", "", text("accessible"));
   actions.append(access);
 
   const directions = document.createElement("a");
@@ -165,17 +359,18 @@ function createCard(place) {
   directions.href = `https://www.google.com/maps/dir/?api=1&destination=${place.latitude}%2C${place.longitude}`;
   directions.target = "_blank";
   directions.rel = "noreferrer";
-  directions.textContent = "Directions ↗";
+  directions.textContent = `${text("directions")} ↗`;
   directions.addEventListener("click", (event) => event.stopPropagation());
   actions.append(directions);
 
-  if (place.sourceUrl) {
+  const sourceUrl = localized(place, "sourceUrl") || place.sourceUrl;
+  if (sourceUrl) {
     const venueLink = document.createElement("a");
     venueLink.className = "venue-link";
-    venueLink.href = place.sourceUrl;
+    venueLink.href = sourceUrl;
     venueLink.target = "_blank";
     venueLink.rel = "noreferrer";
-    venueLink.textContent = "Park info ↗";
+    venueLink.textContent = `${text("placeInfo")} ↗`;
     venueLink.addEventListener("click", (event) => event.stopPropagation());
     actions.append(venueLink);
   }
@@ -213,9 +408,18 @@ function render() {
   const query = normalizeText(elements.search.value.trim());
   const district = elements.district.value;
   let places = state.allPlaces.filter((place) => {
-    const searchable = normalizeText(
-      `${place.name} ${place.address} ${place.districts.join(" ")} ${place.facility} ${place.category}`,
-    );
+    const searchable = normalizeText([
+      place.name,
+      place.address,
+      place.districts.join(" "),
+      place.facility,
+      place.category,
+      place.fr?.name,
+      place.fr?.address,
+      place.fr?.districts?.join(" "),
+      place.fr?.facility,
+      place.fr?.category,
+    ].join(" "));
     return (!query || searchable.includes(query)) && (!district || place.districts.includes(district));
   });
 
@@ -230,8 +434,8 @@ function render() {
       (first, second) =>
         Number(first.isClosed) - Number(second.isClosed) ||
         (state.sortAscending
-          ? first.name.localeCompare(second.name, "fr")
-          : second.name.localeCompare(first.name, "fr")),
+          ? localized(first, "name").localeCompare(localized(second, "name"), state.language)
+          : localized(second, "name").localeCompare(localized(first, "name"), state.language)),
     );
   }
 
@@ -242,8 +446,8 @@ function render() {
   if (!places.length) {
     const empty = document.createElement("div");
     empty.className = "empty-state";
-    addText(empty, "strong", "", "No spots found");
-    addText(empty, "span", "", "Try another park name or borough.");
+    addText(empty, "strong", "", text("searchHeading"));
+    addText(empty, "span", "", text("searchHelp"));
     elements.list.append(empty);
   } else {
     const fragment = document.createDocumentFragment();
@@ -255,10 +459,10 @@ function render() {
     elements.list.append(fragment);
   }
 
-  elements.count.textContent = `${places.length} ${places.length === 1 ? "spot" : "spots"}`;
+  elements.count.textContent = `${places.length} ${places.length === 1 ? text("spotOne") : text("spotMany")}`;
   elements.caption.textContent = state.userLocation
-    ? "Sorted by distance from your location"
-    : "Public facilities across Montréal";
+    ? text("sortedNearby")
+    : text("acrossTown");
   elements.list.setAttribute("aria-busy", "false");
 
   if (places.length) {
@@ -268,16 +472,21 @@ function render() {
 }
 
 function fillDistricts() {
+  const selected = elements.district.value;
   const districts = [...new Set(state.allPlaces.flatMap((place) => place.districts))]
     .filter(Boolean)
-    .sort((first, second) => first.localeCompare(second, "fr"));
+    .sort((first, second) => first.localeCompare(second, state.language));
   elements.district.replaceChildren(elements.district.options[0]);
   for (const district of districts) {
     const option = document.createElement("option");
     option.value = district;
-    option.textContent = district;
+    const example = state.allPlaces.find((place) => place.districts.includes(district));
+    const districtIndex = example.districts.indexOf(district);
+    option.textContent =
+      state.language === "fr" ? example.fr?.districts?.[districtIndex] || district : district;
     elements.district.append(option);
   }
+  elements.district.value = selected;
 }
 
 function loadPlaces() {
@@ -290,9 +499,9 @@ function loadPlaces() {
   spinner.className = "loading-spinner";
   spinner.setAttribute("aria-hidden", "true");
   loading.append(spinner);
-  addText(loading, "span", "", "Finding the nearest little rooms…");
+  addText(loading, "span", "", text("loading"));
   elements.list.append(loading);
-  elements.count.textContent = "Finding washrooms…";
+  elements.count.textContent = text("finding");
 
   try {
     const places = window.WASHROOM_DATA;
@@ -314,7 +523,7 @@ function loadPlaces() {
     render();
   } catch (error) {
     console.error("Unable to read bundled Montreal washroom data:", error);
-    elements.count.textContent = "Data unavailable";
+    elements.count.textContent = text("dataUnavailable");
     elements.list.replaceChildren();
     elements.list.setAttribute("aria-busy", "false");
     elements.error.hidden = false;
@@ -323,16 +532,16 @@ function loadPlaces() {
 
 function locateUser() {
   if (!navigator.geolocation) {
-    elements.count.textContent = "Location not supported";
+    elements.count.textContent = text("locationNotSupported");
     return;
   }
 
   elements.locate.disabled = true;
-  elements.locate.querySelector("span").textContent = "Locating…";
+  elements.locate.querySelector("span").textContent = text("locating");
   navigator.geolocation.getCurrentPosition(
     ({ coords }) => {
       state.userLocation = { latitude: coords.latitude, longitude: coords.longitude };
-      elements.locate.querySelector("span").textContent = "Near me";
+      elements.locate.querySelector("span").textContent = text("nearMe");
       elements.locate.disabled = false;
       state.selectedId = null;
       render();
@@ -348,9 +557,11 @@ function locateUser() {
     },
     (error) => {
       elements.locate.disabled = false;
-      elements.locate.querySelector("span").textContent = "Near me";
+      elements.locate.querySelector("span").textContent = text("nearMe");
       elements.count.textContent =
-        error.code === error.PERMISSION_DENIED ? "Location access denied" : "Location unavailable";
+        error.code === error.PERMISSION_DENIED
+          ? text("locationDenied")
+          : text("locationUnavailable");
     },
     { enableHighAccuracy: false, timeout: 10000, maximumAge: 300000 },
   );
@@ -358,23 +569,34 @@ function locateUser() {
 
 function main() {
   try {
+    const savedLanguage = localStorage.getItem("loocal-language");
+    if (savedLanguage && translations[savedLanguage]) state.language = savedLanguage;
+  } catch {
+    // File-based pages may not expose local storage.
+  }
+  applyTranslations();
+
+  try {
     initMap();
   } catch (error) {
     console.error(error);
     elements.error.hidden = false;
     elements.list.replaceChildren();
     elements.list.setAttribute("aria-busy", "false");
-    elements.count.textContent = "Map unavailable";
+    elements.count.textContent = text("mapUnavailable");
     return;
   }
 
+  elements.language.addEventListener("click", () => {
+    setLanguage(state.language === "fr" ? "en" : "fr");
+  });
   elements.search.addEventListener("input", render);
   elements.district.addEventListener("change", render);
   elements.locate.addEventListener("click", locateUser);
   elements.retry.addEventListener("click", loadPlaces);
   elements.sort.addEventListener("click", () => {
     state.sortAscending = !state.sortAscending;
-    elements.sort.innerHTML = state.sortAscending ? "A–Z <span aria-hidden=\"true\">↕</span>" : "Z–A <span aria-hidden=\"true\">↕</span>";
+    elements.sort.innerHTML = `${state.sortAscending ? text("sortAscending") : text("sortDescending")} <span aria-hidden="true">↕</span>`;
     state.userLocation = null;
     render();
   });
