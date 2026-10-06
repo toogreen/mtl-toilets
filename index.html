@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Find city-listed public washrooms across Montréal, including parks, libraries, pools, and community facilities."
+    />
+    <meta name="theme-color" content="#f6f5f0" />
+    <title>Washroom Finder — Montréal</title>
+    <link rel="preconnect" href="https://unpkg.com" />
+    <link rel="preconnect" href="https://a.tile.openstreetmap.org" />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+      crossorigin=""
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <script
+      src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+      integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+      crossorigin=""
+      defer
+    ></script>
+    <script src="washrooms-data.js" defer></script>
+    <script src="app.js" defer></script>
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="#" aria-label="Washroom Finder home">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 32 32" fill="none">
+            <path d="M9 5.5h14v4.2a7 7 0 0 1-14 0V5.5Z" />
+            <path d="M12 16.4v4.2a4 4 0 0 0 8 0v-4.2M16 24.8v2.1M12.3 27h7.4" />
+            <path d="M12 9.3h8" />
+          </svg>
+        </span>
+        <span class="brand-name">loo<span>cal</span></span>
+      </a>
+      <div class="topbar-note">
+        <span class="live-dot" aria-hidden="true"></span>
+        A little relief, around the corner
+      </div>
+      <a class="about-link" href="#about">About this map <span aria-hidden="true">↗</span></a>
+    </header>
+
+    <main>
+      <section class="intro" aria-labelledby="page-title">
+        <div class="intro-copy">
+          <p class="eyebrow"><span class="eyebrow-line"></span> MONTRÉAL, QC</p>
+          <h1 id="page-title">Nature calls.<br /><span>We’ve got a map.</span></h1>
+          <p class="intro-description">
+            Find a public washroom in parks, libraries, pools, and other city facilities.
+          </p>
+        </div>
+        <div class="intro-stamp" aria-hidden="true">
+          <span>GOOD TO</span>
+          <svg viewBox="0 0 48 48" fill="none">
+            <path d="M13 7h22v7a11 11 0 0 1-22 0V7Z" />
+            <path d="M17 14h14m-9 12v6a6 6 0 0 0 12 0v-6m-6 12v7m-6 0h12" />
+          </svg>
+          <span>GO</span>
+        </div>
+      </section>
+
+      <section class="finder" aria-label="Find a public washroom">
+        <div class="finder-toolbar">
+          <label class="search-box" for="search">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <circle cx="10.8" cy="10.8" r="6.8" />
+              <path d="m16 16 4.5 4.5" />
+            </svg>
+            <input
+              id="search"
+              type="search"
+              placeholder="Search a place, neighbourhood, or address"
+              autocomplete="off"
+            />
+            <kbd>/</kbd>
+          </label>
+          <label class="district-select">
+            <span class="sr-only">Filter by borough</span>
+            <select id="district-filter">
+              <option value="">All boroughs</option>
+            </select>
+            <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
+              <path d="m5 7.5 5 5 5-5" />
+            </svg>
+          </label>
+          <button class="locate-button" id="locate-button" type="button">
+            <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
+              <circle cx="10" cy="10" r="5.5" />
+              <circle cx="10" cy="10" r="1.5" />
+              <path d="M10 1.5v3m0 11v3m8.5-8.5h-3m-11 0h-3" />
+            </svg>
+            <span>Near me</span>
+          </button>
+        </div>
+
+        <div class="filter-row">
+          <div class="active-filter">
+            <span class="filter-check" aria-hidden="true">✓</span>
+            City-listed washrooms
+          </div>
+          <span class="filter-note">Parks, libraries, pools & more · check venue access</span>
+          <span class="results-count" id="results-count" aria-live="polite">Finding washrooms…</span>
+        </div>
+
+        <div class="results-layout">
+          <section class="list-panel" aria-label="Washroom locations">
+            <div class="list-heading">
+              <div>
+                <h2>Nearby spots</h2>
+                <p id="list-caption">Public facilities across Montréal</p>
+              </div>
+              <button
+                class="sort-button"
+                id="sort-button"
+                type="button"
+                aria-label="Sort by place name"
+                title="Sort by place name"
+              >
+                A–Z <span aria-hidden="true">↕</span>
+              </button>
+            </div>
+            <div class="place-list" id="place-list" aria-live="polite" aria-busy="true">
+              <div class="loading-state">
+                <span class="loading-spinner" aria-hidden="true"></span>
+                <span>Finding the nearest little rooms…</span>
+              </div>
+            </div>
+            <div class="error-state" id="error-state" hidden>
+              <span class="error-icon" aria-hidden="true">!</span>
+              <p>We couldn’t load the city’s location data.</p>
+              <button id="retry-button" type="button">Try again</button>
+            </div>
+          </section>
+
+          <section class="map-panel" aria-label="Map of public washrooms">
+            <div id="map" role="application" aria-label="Interactive map showing washroom locations"></div>
+            <div class="map-legend">
+              <span class="legend-pin" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <path d="M12 22s8-7.2 8-13a8 8 0 1 0-16 0c0 5.8 8 13 8 13Z" />
+                  <path d="M9 6h6v2a3 3 0 0 1-6 0V6Zm2 5v2a1 1 0 0 0 2 0v-2m-1 4v2" />
+                </svg>
+              </span>
+              <span>Public washroom</span>
+              <span class="legend-closed-pin" aria-hidden="true"></span>
+              <span>Temporarily closed</span>
+            </div>
+            <div class="map-credit">
+              Map © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">OpenStreetMap</a>
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <footer class="page-footer" id="about">
+        <div class="footer-message">
+          <span class="footer-icon" aria-hidden="true">✳</span>
+          <p><strong>City-listed public washrooms · data snapshot October 5, 2026.</strong> Park entry is free; other venues may have their own access hours or admission rules. Check before heading out.</p>
+        </div>
+        <a
+          class="source-link"
+          href="https://donnees.montreal.ca/dataset/lieux-batiments-vocation-publique"
+          target="_blank"
+          rel="noreferrer"
+        >
+          Location & accessibility data by Ville de Montréal <span aria-hidden="true">↗</span>
+        </a>
+      </footer>
+    </main>
+  </body>
+</html>
