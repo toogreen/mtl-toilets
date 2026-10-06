@@ -2,13 +2,19 @@
 <html lang="fr">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta
       name="description"
       content="Trouvez les toilettes publiques répertoriées par la Ville de Montréal : parcs, bibliothèques, piscines et autres lieux."
     />
-    <meta name="theme-color" content="#f6f5f0" />
+    <meta name="theme-color" content="#32664b" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="Loocal" />
     <title>Toilettes à Montréal — Loocal</title>
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <link rel="icon" href="./icons/icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
     <link rel="preconnect" href="https://unpkg.com" />
     <link rel="preconnect" href="https://a.tile.openstreetmap.org" />
     <link
@@ -44,6 +50,12 @@
         <span data-i18n="topbarNote">Un petit coin de soulagement, tout près</span>
       </div>
       <div class="topbar-actions">
+        <button class="install-button" id="install-button" type="button">
+          <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
+            <path d="M10 2.5v9m0 0 3-3m-3 3-3-3M4 13v3a1.5 1.5 0 0 0 1.5 1.5h9A1.5 1.5 0 0 0 16 16v-3" />
+          </svg>
+          <span data-i18n="installApp">Installer</span>
+        </button>
         <button class="language-button" id="language-button" type="button" aria-label="Switch language to English">
           <span data-i18n="languageButton">English</span>
         </button>
@@ -192,5 +204,44 @@
         <a href="https://toogreen.ca">toogreen.ca</a>
       </footer>
     </main>
+    <dialog class="install-dialog" id="install-dialog" aria-labelledby="install-title" aria-describedby="install-description">
+      <form method="dialog" class="install-dialog-card">
+        <button class="install-dialog-close" value="close" aria-label="Fermer" data-i18n-aria-label="closeDialog">
+          <span data-i18n="closeDialog">Fermer</span>
+          <span aria-hidden="true">×</span>
+        </button>
+        <span class="install-dialog-icon" aria-hidden="true">
+          <svg viewBox="0 0 32 32" fill="none">
+            <path d="M9 5.5h14v4.2a7 7 0 0 1-14 0V5.5Z" />
+            <path d="M12 16.4v4.2a4 4 0 0 0 8 0v-4.2M16 24.8v2.1M12.3 27h7.4" />
+            <path d="M12 9.3h8" />
+          </svg>
+        </span>
+        <h2 id="install-title" data-i18n="installTitle">Emportez Loocal avec vous</h2>
+        <p class="install-dialog-intro" id="install-description" data-i18n="installDescription">
+          Ajoutez l’application à votre écran d’accueil pour la retrouver facilement, même hors ligne.
+        </p>
+        <ol class="install-instructions">
+          <li data-i18n="installStepOne">Dans le navigateur, ouvrez le menu de partage ou le menu ⋮.</li>
+          <li data-i18n="installStepTwo">Choisissez « Sur l’écran d’accueil » ou « Installer l’application ».</li>
+          <li data-i18n="installStepThree">Confirmez en appuyant sur « Ajouter » ou « Installer ».</li>
+        </ol>
+        <p class="install-dialog-note" data-i18n="installOfflineNote">
+          La liste des lieux fonctionne hors ligne après votre première visite. La carte nécessite une connexion Internet.
+        </p>
+        <button class="install-confirm" id="install-confirm" type="button" hidden>
+          <span data-i18n="installNow">Installer l’application</span>
+        </button>
+      </form>
+    </dialog>
+    <script>
+      if ("serviceWorker" in navigator && (location.protocol === "https:" || location.hostname === "localhost" || location.hostname === "127.0.0.1")) {
+        window.addEventListener("load", () => {
+          navigator.serviceWorker.register("./service-worker.js", { scope: "./" }).catch((error) => {
+            console.error("Loocal could not enable offline support:", error);
+          });
+        });
+      }
+    </script>
   </body>
 </html>

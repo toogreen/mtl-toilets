@@ -59,6 +59,16 @@ const translations = {
     locationUnavailable: "Position indisponible",
     sortAscending: "A–Z",
     sortDescending: "Z–A",
+    installApp: "Installer",
+    installTitle: "Emportez Loocal avec vous",
+    installDescription: "Ajoutez l’application à votre écran d’accueil pour la retrouver facilement, même hors ligne.",
+    installStepOne: "Sur iPhone, touchez Partager dans Safari. Sur Android, ouvrez le menu ⋮ de Chrome.",
+    installStepTwo: "Choisissez « Sur l’écran d’accueil » ou « Installer l’application ».",
+    installStepThree: "Confirmez en appuyant sur « Ajouter » ou « Installer ».",
+    installOfflineNote: "La liste des lieux fonctionne hors ligne après votre première visite. La carte nécessite une connexion Internet.",
+    installNow: "Installer l’application",
+    closeDialog: "Fermer",
+    appInstalled: "Application installée",
   },
   en: {
     brandLabel: "Loocal — Montréal washrooms",
@@ -116,6 +126,16 @@ const translations = {
     locationUnavailable: "Location unavailable",
     sortAscending: "A–Z",
     sortDescending: "Z–A",
+    installApp: "Install",
+    installTitle: "Take Loocal with you",
+    installDescription: "Add the app to your home screen so it’s easy to find, even when you’re offline.",
+    installStepOne: "On iPhone, tap Share in Safari. On Android, open Chrome’s ⋮ menu.",
+    installStepTwo: "Choose “Add to Home Screen” or “Install app.”",
+    installStepThree: "Confirm by tapping “Add” or “Install.”",
+    installOfflineNote: "The location list works offline after your first visit. The map requires an internet connection.",
+    installNow: "Install app",
+    closeDialog: "Close",
+    appInstalled: "App installed",
   },
 };
 
@@ -142,7 +162,12 @@ const elements = {
   locate: document.querySelector("#locate-button"),
   sort: document.querySelector("#sort-button"),
   language: document.querySelector("#language-button"),
+  install: document.querySelector("#install-button"),
+  installDialog: document.querySelector("#install-dialog"),
+  installConfirm: document.querySelector("#install-confirm"),
 };
+
+let deferredInstallPrompt = null;
 
 const icons = {
   pin: '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 18s6-5.4 6-9.8a6 6 0 1 0-12 0C4 12.6 10 18 10 18Z"/><circle cx="10" cy="8" r="2"/></svg>',
@@ -194,6 +219,9 @@ function applyTranslations() {
 
   elements.language.textContent = text("languageButton");
   elements.language.setAttribute("aria-label", text("languageTarget"));
+  elements.install.querySelector("span").textContent = text("installApp");
+  elements.installConfirm.querySelector("span").textContent = text("installNow");
+  elements.installDialog.querySelector(".install-dialog-close").setAttribute("aria-label", text("closeDialog"));
   elements.district.options[0].textContent = text("allDistricts");
   elements.sort.innerHTML = `${state.sortAscending ? text("sortAscending") : text("sortDescending")} <span aria-hidden="true">↕</span>`;
   elements.count.textContent = state.allPlaces.length
@@ -575,7 +603,33 @@ function main() {
     // File-based pages may not expose local storage.
   }
   applyTranslations();
+  const isInstalled =
+    window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true;
+  if (isInstalled) elements.install.hidden = true;
 
+  window.addEventListener("beforeinstallprompt", (event) => {
+    event.preventDefault();
+    deferredInstallPrompt = event;
+    if (elements.installDialog.open) elements.installConfirm.hidden = false;
+  });
+  window.addEventListener("appinstalled", () => {
+    deferredInstallPrompt = null;
+    elements.install.hidden = true;
+  });
+  elements.install.addEventListener("click", () => {
+    elements.installConfirm.hidden = !deferredInstallPrompt;
+    elements.installDialog.showModal();
+  });
+  elements.installConfirm.addEventListener("click", async () => {
+    if (!deferredInstallPrompt) return;
+    deferredInstallPrompt.prompt();
+    await deferredInstallPrompt.userChoice;
+    deferredInstallPrompt = null;
+    elements.installDialog.close();
+  });
+  elements.installDialog.addEventListener("close", () => {
+    elements.installConfirm.hidden = true;
+  });
   try {
     initMap();
   } catch (error) {

@@ -1,0 +1,49 @@
+{
+  "id": "./",
+  "name": "Loocal — Toilettes à Montréal",
+  "short_name": "Loocal",
+  "description": "Trouvez des toilettes publiques partout à Montréal.",
+  "lang": "fr-CA",
+  "dir": "ltr",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "orientation": "any",
+  "background_color": "#f6f5f0",
+  "theme_color": "#32664b",
+  "categories": ["navigation", "travel"],
+  "icons": [
+    {
+      "src": "./icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "./icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    },
+    {
+      "src": "./icons/app-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./icons/app-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Trouver des toilettes",
+      "short_name": "À proximité",
+      "url": "./#search"
+    }
+  ]
+}

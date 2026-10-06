@@ -61,11 +61,12 @@ a {
 }
 
 .topbar {
-  height: 72px;
+  height: calc(72px + env(safe-area-inset-top));
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 6.1%;
+  padding: env(safe-area-inset-top) max(6.1%, env(safe-area-inset-right)) 0
+    max(6.1%, env(safe-area-inset-left));
   border-bottom: 1px solid var(--line);
 }
 
@@ -118,6 +119,39 @@ a {
   display: flex;
   align-items: center;
   gap: 17px;
+}
+
+.install-button {
+  min-height: 34px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 6px;
+  color: #fffefa;
+  background: var(--green);
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 140ms ease;
+}
+
+.install-button:hover {
+  background: var(--green-dark);
+}
+
+.install-button svg {
+  width: 15px;
+  height: 15px;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.6;
+}
+
+.install-button[hidden] {
+  display: none;
 }
 
 .language-button {
@@ -712,6 +746,128 @@ kbd {
   color: #34654b;
 }
 
+.install-dialog {
+  width: min(440px, calc(100% - 32px));
+  max-width: none;
+  max-height: min(640px, calc(100% - 40px));
+  overflow: auto;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  color: var(--ink);
+  background: var(--white);
+  box-shadow: 0 20px 70px rgb(32 33 29 / 25%);
+}
+
+.install-dialog::backdrop {
+  background: rgb(22 29 24 / 48%);
+  backdrop-filter: blur(3px);
+}
+
+.install-dialog-card {
+  position: relative;
+  padding: 30px;
+}
+
+.install-dialog-close {
+  position: absolute;
+  top: 13px;
+  right: 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 7px;
+  border: 0;
+  border-radius: 5px;
+  color: var(--muted);
+  background: transparent;
+  font-size: 10px;
+  cursor: pointer;
+}
+
+.install-dialog-close span:last-child {
+  font-size: 17px;
+}
+
+.install-dialog-icon {
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  margin: 2px 0 18px;
+  border-radius: 12px;
+  background: var(--green);
+}
+
+.install-dialog-icon svg {
+  width: 32px;
+  stroke: #fffefa;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.65;
+}
+
+.install-dialog h2 {
+  margin: 0;
+  font-family: var(--display);
+  font-size: 23px;
+  letter-spacing: -0.6px;
+}
+
+.install-dialog-intro {
+  margin: 9px 0 18px;
+  color: #6c6d65;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.install-instructions {
+  display: grid;
+  gap: 11px;
+  margin: 0;
+  padding-left: 21px;
+  color: #44463e;
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.install-instructions li {
+  padding-left: 3px;
+}
+
+.install-instructions li::marker {
+  color: var(--green);
+  font-family: var(--mono);
+  font-weight: 500;
+}
+
+.install-dialog-note {
+  margin: 19px 0 0;
+  padding: 11px 12px;
+  border-radius: 6px;
+  color: #5c6258;
+  background: #f0f4ed;
+  font-size: 10px;
+  line-height: 1.6;
+}
+
+.install-confirm {
+  width: 100%;
+  min-height: 42px;
+  margin-top: 16px;
+  border: 0;
+  border-radius: 7px;
+  color: #fffefa;
+  background: var(--green);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.install-confirm[hidden] {
+  display: none;
+}
+
 .toilet-marker {
   width: 32px !important;
   height: 39px !important;
@@ -777,7 +933,7 @@ kbd {
   align-items: center;
   justify-content: space-between;
   gap: 20px;
-  padding: 16px 2px 22px;
+  padding: 16px 2px max(22px, env(safe-area-inset-bottom));
 }
 
 .footer-message {
@@ -837,8 +993,9 @@ kbd {
 
 @media (max-width: 760px) {
   .topbar {
-    height: 62px;
-    padding: 0 5%;
+    height: calc(62px + env(safe-area-inset-top));
+    padding-right: max(5%, env(safe-area-inset-right));
+    padding-left: max(5%, env(safe-area-inset-left));
   }
 
   .topbar-note {
@@ -846,7 +1003,7 @@ kbd {
   }
 
   .topbar-actions {
-    gap: 9px;
+    gap: 7px;
   }
 
   main {
@@ -925,6 +1082,21 @@ kbd {
     min-height: 29px;
     padding: 0 7px;
     font-size: 10px;
+  }
+
+  .install-button {
+    min-height: 29px;
+    gap: 4px;
+    padding: 0 6px;
+    font-size: 10px;
+  }
+
+  .install-button svg {
+    width: 13px;
+  }
+
+  .install-dialog-card {
+    padding: 25px 21px;
   }
 
   .intro {
