@@ -6,12 +6,13 @@ A bilingual (French/English) static map of public washrooms listed by the City o
 
 Open `index.html` in a browser and use the language button in the header to switch between French and English. No build step, package install, or local server is required. An internet connection is needed to load the map tiles and external fonts.
 
-## Install on a phone
+## Install the app
 
-The app is a Progressive Web App (PWA). Visit its HTTPS website on your phone, then use the **Installer** button for device-specific instructions:
+The app is a Progressive Web App (PWA). Visit its HTTPS website and tap **Installer** to open Chrome's native install prompt in one step when available:
 
+- **Linux/desktop Chrome:** If no prompt appears, open the ⋮ menu, choose **Cast, save, and share**, then **Install page as app**.
 - **iPhone/iPad:** In Safari, tap Share, then **Add to Home Screen**.
-- **Android:** In Chrome, open the menu and choose **Install app** or **Add to Home Screen**.
+- **Android:** In Chrome, tap **Installer**; if no prompt appears, open the menu and choose **Install app** or **Add to Home Screen**.
 
 After the first online visit, the app and location list are available offline. Map tiles still need an internet connection. Opening the HTML file directly is useful for trying the site, but installing a PWA requires HTTPS (or localhost during development).
 

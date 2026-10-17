@@ -62,8 +62,9 @@ const translations = {
     installApp: "Installer",
     installTitle: "Emportez Loocal avec vous",
     installDescription: "Ajoutez l’application à votre écran d’accueil pour la retrouver facilement, même hors ligne.",
+    installStepDesktop: "Sur un ordinateur Linux avec Chrome, ouvrez ⋮ > Caster, enregistrer et partager.",
     installStepOne: "Sur iPhone, touchez Partager dans Safari. Sur Android, ouvrez le menu ⋮ de Chrome.",
-    installStepTwo: "Choisissez « Sur l’écran d’accueil » ou « Installer l’application ».",
+    installStepTwo: "Choisissez « Installer la page comme application » sur ordinateur, ou « Sur l’écran d’accueil » / « Installer l’application » sur téléphone.",
     installStepThree: "Confirmez en appuyant sur « Ajouter » ou « Installer ».",
     installOfflineNote: "La liste des lieux fonctionne hors ligne après votre première visite. La carte nécessite une connexion Internet.",
     installNow: "Installer l’application",
@@ -129,8 +130,9 @@ const translations = {
     installApp: "Install",
     installTitle: "Take Loocal with you",
     installDescription: "Add the app to your home screen so it’s easy to find, even when you’re offline.",
+    installStepDesktop: "In Chrome on Linux, open ⋮ > Cast, save, and share.",
     installStepOne: "On iPhone, tap Share in Safari. On Android, open Chrome’s ⋮ menu.",
-    installStepTwo: "Choose “Add to Home Screen” or “Install app.”",
+    installStepTwo: "Choose “Install page as app” on desktop, or “Add to Home Screen” / “Install app” on a phone.",
     installStepThree: "Confirm by tapping “Add” or “Install.”",
     installOfflineNote: "The location list works offline after your first visit. The map requires an internet connection.",
     installNow: "Install app",
@@ -168,6 +170,21 @@ const elements = {
 };
 
 let deferredInstallPrompt = null;
+
+async function promptInstall() {
+  const installPrompt = deferredInstallPrompt;
+  if (!installPrompt) return null;
+
+  deferredInstallPrompt = null;
+  try {
+    await installPrompt.prompt();
+    const { outcome } = await installPrompt.userChoice;
+    return outcome === "accepted";
+  } catch (error) {
+    console.error("Loocal could not open the install prompt:", error);
+    return null;
+  }
+}
 
 const icons = {
   pin: '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 18s6-5.4 6-9.8a6 6 0 1 0-12 0C4 12.6 10 18 10 18Z"/><circle cx="10" cy="8" r="2"/></svg>',
@@ -616,16 +633,13 @@ function main() {
     deferredInstallPrompt = null;
     elements.install.hidden = true;
   });
-  elements.install.addEventListener("click", () => {
+  elements.install.addEventListener("click", async () => {
+    if (deferredInstallPrompt && (await promptInstall()) !== null) return;
     elements.installConfirm.hidden = !deferredInstallPrompt;
     elements.installDialog.showModal();
   });
   elements.installConfirm.addEventListener("click", async () => {
-    if (!deferredInstallPrompt) return;
-    deferredInstallPrompt.prompt();
-    await deferredInstallPrompt.userChoice;
-    deferredInstallPrompt = null;
-    elements.installDialog.close();
+    if ((await promptInstall()) !== null) elements.installDialog.close();
   });
   elements.installDialog.addEventListener("close", () => {
     elements.installConfirm.hidden = true;
